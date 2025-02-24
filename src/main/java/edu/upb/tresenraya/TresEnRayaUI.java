@@ -585,7 +585,7 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         try {
             SolicitudConexion solicitud = new SolicitudConexion("NICOLAS");
             solicitud.parsear(msg);
-            solicitud.nombre;
+//            solicitud.nombre;
             if (msg.matches("0001\\|.*")) {
             String[] splitMessage = msg.split("\\|");
             this.chat.setText(this.chat.getText()+System.lineSeparator()+"El usuario "+splitMessage[1]+" ha intentado conectarse. Aceptas? y/n.");
