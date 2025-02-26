@@ -8,23 +8,22 @@ package edu.upb.tresenraya.Comando;
  *
  * @author nicol
  */
-public class SolicitudConexion extends Comando{
-//    private String comando = "0001";
-//    private String nombre = "NICOLAS CRESPO";
-    public String nombre;
-    public SolicitudConexion(String nombre) {
-        this.nombre = nombre;
-        this.comando = "0001";
-    }
-    public SolicitudConexion() {
-    }
+public class MarcarSimbolo extends Comando {
 
+    public String simbolo;
+    public int valorX;
+    public int valorY;
+    public MarcarSimbolo(String comando) {
+        parsear(comando);
+    }
     @Override
     public void parsear(String comando) {
-        if (comando.matches("0001\\|.*")) {
+        if (comando.matches("0008\\|.\\|.\\|.")) {
             String[] split = comando.split("\\|");
             this.comando = split[0];
-            this.nombre = split[1];
+            this.simbolo = split[1];
+            this.valorX = Integer.valueOf(split[2]);
+            this.valorY = Integer.valueOf(split[3]);
             return;
         }
         System.out.println("El comando tenia una forma erronea.");
@@ -33,7 +32,8 @@ public class SolicitudConexion extends Comando{
 
     @Override
     public String getComando() {
-        return comando+"|"+nombre+System.lineSeparator();
+        return comando+"|"+simbolo+"|"+valorX+"|"+valorY;
     }
+    
     
 }

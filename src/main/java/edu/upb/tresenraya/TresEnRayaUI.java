@@ -4,6 +4,10 @@
  */
 package edu.upb.tresenraya;
 
+import edu.upb.tresenraya.aula.InterfazCompra;
+import edu.upb.tresenraya.Comando.Comando;
+import edu.upb.tresenraya.Comando.MarcarSimbolo;
+import edu.upb.tresenraya.Comando.NuevaPartida;
 import edu.upb.tresenraya.Comando.SolicitudConexion;
 import edu.upb.tresenraya.db.ConexionDb;
 import edu.upb.tresenraya.mediador.Mediador;
@@ -71,17 +75,18 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         grilla00 = new java.awt.Button();
         grilla01 = new java.awt.Button();
         grilla02 = new java.awt.Button();
+        grilla12 = new java.awt.Button();
         grilla10 = new java.awt.Button();
-        grilla4 = new java.awt.Button();
-        grilla5 = new java.awt.Button();
-        grilla6 = new java.awt.Button();
-        grilla7 = new java.awt.Button();
-        grilla8 = new java.awt.Button();
+        grilla11 = new java.awt.Button();
+        grilla20 = new java.awt.Button();
+        grilla21 = new java.awt.Button();
+        grilla22 = new java.awt.Button();
         jScrollPane2 = new javax.swing.JScrollPane();
         chat = new javax.swing.JTextArea();
         textoIP = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         mandarMensaje = new javax.swing.JTextField();
+        btnReinicio = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
 
@@ -157,6 +162,13 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
             }
         });
 
+        grilla12.setLabel("_");
+        grilla12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                grilla12ActionPerformed(evt);
+            }
+        });
+
         grilla10.setLabel("_");
         grilla10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -164,38 +176,31 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
             }
         });
 
-        grilla4.setLabel("_");
-        grilla4.addActionListener(new java.awt.event.ActionListener() {
+        grilla11.setLabel("_");
+        grilla11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grilla4ActionPerformed(evt);
+                grilla11ActionPerformed(evt);
             }
         });
 
-        grilla5.setLabel("_");
-        grilla5.addActionListener(new java.awt.event.ActionListener() {
+        grilla20.setLabel("_");
+        grilla20.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grilla5ActionPerformed(evt);
+                grilla20ActionPerformed(evt);
             }
         });
 
-        grilla6.setLabel("_");
-        grilla6.addActionListener(new java.awt.event.ActionListener() {
+        grilla21.setLabel("_");
+        grilla21.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grilla6ActionPerformed(evt);
+                grilla21ActionPerformed(evt);
             }
         });
 
-        grilla7.setLabel("_");
-        grilla7.addActionListener(new java.awt.event.ActionListener() {
+        grilla22.setLabel("_");
+        grilla22.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grilla7ActionPerformed(evt);
-            }
-        });
-
-        grilla8.setLabel("_");
-        grilla8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grilla8ActionPerformed(evt);
+                grilla22ActionPerformed(evt);
             }
         });
 
@@ -218,6 +223,13 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
             }
         });
 
+        btnReinicio.setText("Reset button");
+        btnReinicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReinicioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -231,8 +243,8 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(192, 192, 192)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(grilla8, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(grilla7, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(grilla22, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(grilla21, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(36, 36, 36)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -257,11 +269,13 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                                     .addComponent(grilla00, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(32, 32, 32)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(grilla4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(grilla10, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(grilla5, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(grilla12, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(grilla11, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(37, 37, 37)
-                        .addComponent(grilla6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(grilla20, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31)
+                        .addComponent(btnReinicio))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addComponent(jlMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -273,7 +287,7 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -283,23 +297,25 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(grilla00, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(grilla4, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(grilla10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(14, 14, 14)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(grilla01, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(grilla5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(grilla11, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(14, 14, 14)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(grilla02, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(grilla10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(grilla12, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(grilla7, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(grilla21, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(14, 14, 14)
-                                .addComponent(grilla8, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(grilla22, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(grilla6, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(grilla20, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnReinicio))
                         .addGap(14, 14, 14)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -376,6 +392,9 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         else if (mandarMensaje.getText().equals("n")) {
             this.chat.setText(this.chat.getText()+System.lineSeparator()+"Conexion rechazada y socketClient de SERVIDORJUEGO establecido a nulo.");
             servidorJuego.client.send(("0002"+ System.lineSeparator()).getBytes());
+            servidorJuego = null;
+            socketClient = null;
+            btnServer.setText("Iniciar Servidor");
 //            socketClient.send(("0002".getBytes()));
             
         }
@@ -401,8 +420,9 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                 //Socket(ip,puerto)
                 socketClient = new SocketClient(new Socket(textoIP.getText(),1825));
                 socketClient.start();
+                SolicitudConexion solicitudAEnviar = new SolicitudConexion("NICOLAS CRESPO");
                 //0001 es el codigo de solicitud enviada
-                socketClient.send("0001|NICOLAS CRESPO".getBytes());
+                socketClient.send(solicitudAEnviar.getComando().getBytes());
 //                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                 System.out.println("Escriba un mensaje por la caja de texto.");
                 chat.setText(chat.getText()+System.lineSeparator()+"Nueva conexion establecida con "+textoIP.getText()+" exitosamente!");
@@ -427,71 +447,84 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                 e.printStackTrace();
             }
         }
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void grilla00ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla00ActionPerformed
-        // TODO add your handling code here:
-        logica.setGrilla(0,0,logica.turnoActual);
-        grilla00.setLabel(logica.grilla[0][0]);
+    private void logicaBotonPresionado(int valorX, int valorY) {
+        
+        if (socketClient!=null) {
+            socketClient.send(("0008|"+logica.turnoActual+"|"+valorX+"|"+valorY + System.lineSeparator()).getBytes());
+        }
+        if (servidorJuego!=null) {
+            servidorJuego.client.send(("0008|"+logica.turnoActual+"|"+valorX+"|"+valorY + System.lineSeparator()).getBytes());
+        }
+        logica.setGrilla(valorX,valorY,logica.turnoActual);
         if (logica.winner!="")
             victoria();
+    }
+    private void grilla00ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla00ActionPerformed
+        // TODO add your handling code here:
+        int valorX = 0;
+        int valorY = 0;
+        logicaBotonPresionado(valorX,valorY);
+        grilla00.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla00ActionPerformed
 
     private void grilla01ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla01ActionPerformed
-        logica.setGrilla(0,1,logica.turnoActual);
-        grilla01.setLabel(logica.grilla[0][1]);
-        if (logica.winner!="")
-            victoria();
+        int valorX = 0;
+        int valorY = 1;
+        logicaBotonPresionado(valorX,valorY);
+        grilla01.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla01ActionPerformed
 
     private void grilla02ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla02ActionPerformed
-        logica.setGrilla(0,2,logica.turnoActual);
-        grilla02.setLabel(logica.grilla[0][2]);
-        if (logica.winner!="")
-            victoria();
+        int valorX = 0;
+        int valorY = 2;
+        logicaBotonPresionado(valorX,valorY);
+        grilla02.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla02ActionPerformed
 
+    private void grilla12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla12ActionPerformed
+        int valorX = 1;
+        int valorY = 2;
+        logicaBotonPresionado(valorX,valorY);
+        grilla12.setLabel(logica.grilla[valorX][valorY]);
+    }//GEN-LAST:event_grilla12ActionPerformed
+
     private void grilla10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla10ActionPerformed
-        logica.setGrilla(1,2,logica.turnoActual);
-        grilla10.setLabel(logica.grilla[1][2]);
-        if (logica.winner!="")
-            victoria();
+        int valorX = 1;
+        int valorY = 0;
+        logicaBotonPresionado(valorX,valorY);
+        grilla10.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla10ActionPerformed
 
-    private void grilla4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla4ActionPerformed
-        logica.setGrilla(1,0,logica.turnoActual);
-        grilla4.setLabel(logica.grilla[1][0]);
-        if (logica.winner!="")
-            victoria();
-    }//GEN-LAST:event_grilla4ActionPerformed
+    private void grilla11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla11ActionPerformed
+        int valorX = 1;
+        int valorY = 1;
+        logicaBotonPresionado(valorX,valorY);
+        grilla11.setLabel(logica.grilla[valorX][valorY]);
+    }//GEN-LAST:event_grilla11ActionPerformed
 
-    private void grilla5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla5ActionPerformed
-        logica.setGrilla(1,1,logica.turnoActual);
-        grilla5.setLabel(logica.grilla[1][1]);
-        if (logica.winner!="")
-            victoria();
-    }//GEN-LAST:event_grilla5ActionPerformed
+    private void grilla20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla20ActionPerformed
+        int valorX = 2;
+        int valorY = 0;
+        logicaBotonPresionado(valorX,valorY);
+        grilla20.setLabel(logica.grilla[valorX][valorY]);
+    }//GEN-LAST:event_grilla20ActionPerformed
 
-    private void grilla6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla6ActionPerformed
-        logica.setGrilla(2,0,logica.turnoActual);
-        grilla6.setLabel(logica.grilla[2][0]);
-        if (logica.winner!="")
-            victoria();
-    }//GEN-LAST:event_grilla6ActionPerformed
+    private void grilla21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla21ActionPerformed
+        int valorX = 2;
+        int valorY = 1;
+        logicaBotonPresionado(valorX,valorY);
+        grilla21.setLabel(logica.grilla[valorX][valorY]);
+    }//GEN-LAST:event_grilla21ActionPerformed
 
-    private void grilla7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla7ActionPerformed
-        logica.setGrilla(2,1,logica.turnoActual);
-        grilla7.setLabel(logica.grilla[2][1]);
-        if (logica.winner!="")
-            victoria();
-    }//GEN-LAST:event_grilla7ActionPerformed
-
-    private void grilla8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla8ActionPerformed
-        logica.setGrilla(2,2,logica.turnoActual);
-        grilla8.setLabel(logica.grilla[2][2]);
-        if (logica.winner!="")
-            victoria();
-    }//GEN-LAST:event_grilla8ActionPerformed
+    private void grilla22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla22ActionPerformed
+        int valorX = 2;
+        int valorY = 2;
+        logicaBotonPresionado(valorX,valorY);
+        grilla22.setLabel(logica.grilla[valorX][valorY]);
+    }//GEN-LAST:event_grilla22ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -512,6 +545,35 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     private void mandarMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mandarMensajeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_mandarMensajeActionPerformed
+
+    private void btnReinicioPressed() {
+        grilla00.setLabel("_");
+        grilla01.setLabel("_");
+        grilla02.setLabel("_");
+        grilla10.setLabel("_");
+        grilla11.setLabel("_");
+        grilla12.setLabel("_");
+        grilla20.setLabel("_");
+        grilla21.setLabel("_");
+        grilla22.setLabel("_");
+        logica.setTurnoActual("X");
+        logica.grilla=new String[3][3];
+        //Mandamos solicitud de nueva partida
+        servidorJuego.client.send(("0007"+System.lineSeparator()).getBytes());
+//        logica.setGrilla(0, 0, "_");
+//        logica.setGrilla(0, 1, "_");
+//        logica.setGrilla(0, 2, "_");
+//        logica.setGrilla(1, 0, "_");
+//        logica.setGrilla(1, 1, "_");
+//        logica.setGrilla(1, 2, "_");
+//        logica.setGrilla(2, 0, "_");
+//        logica.setGrilla(2, 1, "_");
+//        logica.setGrilla(2, 2, "_");
+    }
+    private void btnReinicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReinicioActionPerformed
+        // TODO add your handling code here:
+        btnReinicioPressed();
+    }//GEN-LAST:event_btnReinicioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -550,6 +612,7 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConectar;
+    private javax.swing.JButton btnReinicio;
     private javax.swing.JButton btnServer;
     private java.awt.Canvas canvas1;
     private javax.swing.JTextArea chat;
@@ -558,11 +621,11 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     private java.awt.Button grilla01;
     private java.awt.Button grilla02;
     private java.awt.Button grilla10;
-    private java.awt.Button grilla4;
-    private java.awt.Button grilla5;
-    private java.awt.Button grilla6;
-    private java.awt.Button grilla7;
-    private java.awt.Button grilla8;
+    private java.awt.Button grilla11;
+    private java.awt.Button grilla12;
+    private java.awt.Button grilla20;
+    private java.awt.Button grilla21;
+    private java.awt.Button grilla22;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -583,12 +646,11 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     public void onMessage(String msg) {
 
         try {
-            SolicitudConexion solicitud = new SolicitudConexion("NICOLAS");
+            SolicitudConexion solicitud = new SolicitudConexion();
             solicitud.parsear(msg);
-//            solicitud.nombre;
-            if (msg.matches("0001\\|.*")) {
-            String[] splitMessage = msg.split("\\|");
-            this.chat.setText(this.chat.getText()+System.lineSeparator()+"El usuario "+splitMessage[1]+" ha intentado conectarse. Aceptas? y/n.");
+            
+            if (solicitud.nombre!=null) {
+            this.chat.setText(this.chat.getText()+System.lineSeparator()+"El usuario "+solicitud.nombre+" ha intentado conectarse. Aceptas? y/n.");
         } else {
                 this.chat.setText(this.chat.getText()+System.lineSeparator()+msg);
                 Thread.sleep(400);
@@ -619,23 +681,91 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
             grilla00.setBackground(Color.orange);
             grilla01.setBackground(Color.orange);
             grilla02.setBackground(Color.orange);
-            grilla4.setBackground(Color.orange);
-            grilla5.setBackground(Color.orange);
             grilla10.setBackground(Color.orange);
-            grilla6.setBackground(Color.orange);
-            grilla7.setBackground(Color.orange);
-            grilla8.setBackground(Color.orange);
+            grilla11.setBackground(Color.orange);
+            grilla12.setBackground(Color.orange);
+            grilla20.setBackground(Color.orange);
+            grilla21.setBackground(Color.orange);
+            grilla22.setBackground(Color.orange);
         }
         if (logica.winner=="O") {
             grilla00.setBackground(Color.cyan);
             grilla01.setBackground(Color.cyan);
             grilla02.setBackground(Color.cyan);
-            grilla4.setBackground(Color.cyan);
-            grilla5.setBackground(Color.cyan);
             grilla10.setBackground(Color.cyan);
-            grilla6.setBackground(Color.cyan);
-            grilla7.setBackground(Color.cyan);
-            grilla8.setBackground(Color.cyan);
+            grilla11.setBackground(Color.cyan);
+            grilla12.setBackground(Color.cyan);
+            grilla20.setBackground(Color.cyan);
+            grilla21.setBackground(Color.cyan);
+            grilla22.setBackground(Color.cyan);
+        }
+    }
+
+    public void onMessage(Object c) {
+        return;
+    }
+
+    @Override
+    public void onMessage(Comando c) {
+        // tambien se puede hacer (c instanceof MarcarSimbolo)
+        if (c.getClass()==MarcarSimbolo.class) {
+            MarcarSimbolo c2 = (MarcarSimbolo) c;
+            chat.setText(chat.getText()+System.lineSeparator()+c.comando);
+            switch(c2.valorX) {
+                case 0:
+                    switch (c2.valorY) {
+                        case 0:
+                            grilla00.setLabel(logica.turnoActual);
+                            break;
+                        case 1:
+                            grilla01.setLabel(logica.turnoActual);
+                            break;
+                        case 2:
+                            grilla02.setLabel(logica.turnoActual);
+                            break;
+                    }
+                    break;
+                case 1:
+                    switch (c2.valorY) {
+                        case 0:
+                            grilla10.setLabel(logica.turnoActual);
+                            break;
+                        case 1:
+                            grilla11.setLabel(logica.turnoActual);
+                            break;
+                        case 2:
+                            grilla12.setLabel(logica.turnoActual);
+                            break;
+                    }
+                    break;
+                    
+                case 2:
+                    switch (c2.valorY) {
+                        case 0:
+                            grilla20.setLabel(logica.turnoActual);
+                            break;
+                        case 1:
+                            grilla21.setLabel(logica.turnoActual);
+                            break;
+                        case 2:
+                            grilla22.setLabel(logica.turnoActual);
+                            break;
+                    }
+                    break;
+            }
+            
+            logica.cambiaTurnos(logica.turnoActual);
+                
+                    
+        }
+        if (c.getClass()==SolicitudConexion.class) {
+            SolicitudConexion c2 = (SolicitudConexion) c;
+            SolicitudConexionUI scui = new SolicitudConexionUI(c2.nombre);
+            System.out.println("Estoy en la linea 675");
+        }
+        if (c.getClass()==NuevaPartida.class) {
+            NuevaPartida c2 = (NuevaPartida) c;
+            btnReinicioPressed();
         }
     }
 }

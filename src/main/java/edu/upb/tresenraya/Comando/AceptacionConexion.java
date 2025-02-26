@@ -15,7 +15,8 @@ public class AceptacionConexion extends Comando {
     public AceptacionConexion(String nombre) {
         this.nombre = nombre;
         this.comando = comando;
-        
+    }
+    public AceptacionConexion() {
     }
     @Override
     public void parsear(String comando) {

@@ -4,11 +4,14 @@
  */
 package edu.upb.tresenraya.mediador;
 
+import edu.upb.tresenraya.Comando.Comando;
+
 /**
  *
  * @author Usuario
  */
 public interface OnMessageListener {
+    void onMessage(Comando c);
     void onMessage(String msg);
     void onClose();
     void onButtonGreen();

@@ -96,8 +96,8 @@
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="192" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="grilla8" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
-                                  <Component id="grilla7" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
+                                  <Component id="grilla22" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
+                                  <Component id="grilla21" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -131,14 +131,16 @@
                                       </Group>
                                       <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="grilla4" min="-2" pref="46" max="-2" attributes="0"/>
                                           <Component id="grilla10" min="-2" pref="46" max="-2" attributes="0"/>
-                                          <Component id="grilla5" min="-2" pref="46" max="-2" attributes="0"/>
+                                          <Component id="grilla12" min="-2" pref="46" max="-2" attributes="0"/>
+                                          <Component id="grilla11" min="-2" pref="46" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
                               <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-                              <Component id="grilla6" min="-2" pref="46" max="-2" attributes="0"/>
+                              <Component id="grilla20" min="-2" pref="46" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                              <Component id="btnReinicio" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
@@ -155,7 +157,7 @@
                               <Component id="jScrollPane2" min="-2" pref="491" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="18" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -167,30 +169,33 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="grilla00" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="grilla4" min="-2" pref="38" max="-2" attributes="0"/>
+                                  <Component id="grilla10" min="-2" pref="38" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="grilla01" min="-2" pref="38" max="-2" attributes="0"/>
-                                          <Component id="grilla5" min="-2" pref="38" max="-2" attributes="0"/>
+                                          <Component id="grilla11" min="-2" pref="38" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="grilla02" min="-2" pref="38" max="-2" attributes="0"/>
-                                          <Component id="grilla10" min="-2" pref="38" max="-2" attributes="0"/>
+                                          <Component id="grilla12" min="-2" pref="38" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="102" attributes="0">
-                                      <Component id="grilla7" min="-2" pref="38" max="-2" attributes="0"/>
+                                      <Component id="grilla21" min="-2" pref="38" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                                      <Component id="grilla8" min="-2" pref="38" max="-2" attributes="0"/>
+                                      <Component id="grilla22" min="-2" pref="38" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="grilla6" min="-2" pref="38" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="grilla20" min="-2" pref="38" max="-2" attributes="0"/>
+                                  <Component id="btnReinicio" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
@@ -279,6 +284,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla02ActionPerformed"/>
               </Events>
             </Component>
+            <Component class="java.awt.Button" name="grilla12">
+              <Properties>
+                <Property name="label" type="java.lang.String" value="_"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla12ActionPerformed"/>
+              </Events>
+            </Component>
             <Component class="java.awt.Button" name="grilla10">
               <Properties>
                 <Property name="label" type="java.lang.String" value="_"/>
@@ -287,44 +300,36 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla10ActionPerformed"/>
               </Events>
             </Component>
-            <Component class="java.awt.Button" name="grilla4">
+            <Component class="java.awt.Button" name="grilla11">
               <Properties>
                 <Property name="label" type="java.lang.String" value="_"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla4ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla11ActionPerformed"/>
               </Events>
             </Component>
-            <Component class="java.awt.Button" name="grilla5">
+            <Component class="java.awt.Button" name="grilla20">
               <Properties>
                 <Property name="label" type="java.lang.String" value="_"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla5ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla20ActionPerformed"/>
               </Events>
             </Component>
-            <Component class="java.awt.Button" name="grilla6">
+            <Component class="java.awt.Button" name="grilla21">
               <Properties>
                 <Property name="label" type="java.lang.String" value="_"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla6ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla21ActionPerformed"/>
               </Events>
             </Component>
-            <Component class="java.awt.Button" name="grilla7">
+            <Component class="java.awt.Button" name="grilla22">
               <Properties>
                 <Property name="label" type="java.lang.String" value="_"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla7ActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="java.awt.Button" name="grilla8">
-              <Properties>
-                <Property name="label" type="java.lang.String" value="_"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla8ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grilla22ActionPerformed"/>
               </Events>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane2">
@@ -358,6 +363,14 @@
             <Component class="javax.swing.JTextField" name="mandarMensaje">
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mandarMensajeActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnReinicio">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reset button"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnReinicioActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

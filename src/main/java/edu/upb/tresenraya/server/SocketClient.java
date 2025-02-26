@@ -4,6 +4,12 @@
  */
 package edu.upb.tresenraya.server;
 
+import edu.upb.tresenraya.Comando.AceptacionConexion;
+import edu.upb.tresenraya.Comando.Comando;
+import edu.upb.tresenraya.Comando.MarcarSimbolo;
+import edu.upb.tresenraya.Comando.NuevaPartida;
+import edu.upb.tresenraya.Comando.RechazoConexion;
+import edu.upb.tresenraya.Comando.SolicitudConexion;
 import edu.upb.tresenraya.mediador.Mediador;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -33,6 +39,29 @@ public class SocketClient extends Thread {
         try {
             String message;
             while ((message = br.readLine()) != null) {
+                if (message.contains("0001")) {
+                    Comando c = new SolicitudConexion();
+                    Mediador.sendMessage(c);
+                }
+                if (message.contains("0002")) {
+                    Comando c = new RechazoConexion();
+                    Mediador.sendMessage(c);
+                }
+                if (message.contains("0003")) {
+                    Comando c = new AceptacionConexion();
+                    Mediador.sendMessage(c);    
+                }
+                
+                if (message.contains("0007")) {
+                    Comando c = new NuevaPartida();
+                    Mediador.sendMessage(c);
+                }
+                
+                if (message.contains("0008")) {
+                    Comando c = new MarcarSimbolo(message);
+                    Mediador.sendMessage(c);
+                }
+                
                 if (message.equals("leave")) {
                     System.exit(0);
                 }

@@ -4,6 +4,7 @@
  */
 package edu.upb.tresenraya.server;
 
+import edu.upb.tresenraya.Comando.Comando;
 import edu.upb.tresenraya.mediador.Mediador;
 import edu.upb.tresenraya.mediador.OnMessageListener;
 import java.io.IOException;
@@ -54,6 +55,11 @@ public class ServidorJuego extends Thread implements OnMessageListener{
     @Override
     public void onButtonGreen() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void onMessage(Comando c) {
+        System.out.println(c.getComando());
     }
     
 
