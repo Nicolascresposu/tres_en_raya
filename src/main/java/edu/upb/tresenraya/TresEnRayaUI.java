@@ -710,31 +710,32 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         // tambien se puede hacer (c instanceof MarcarSimbolo)
         if (c.getClass()==MarcarSimbolo.class) {
             MarcarSimbolo c2 = (MarcarSimbolo) c;
+            logica.setGrilla(c2.valorX,c2.valorY,c2.simbolo);
             chat.setText(chat.getText()+System.lineSeparator()+c.comando);
             switch(c2.valorX) {
                 case 0:
                     switch (c2.valorY) {
                         case 0:
-                            grilla00.setLabel(logica.turnoActual);
+                            grilla00.setLabel(c2.simbolo);
                             break;
                         case 1:
-                            grilla01.setLabel(logica.turnoActual);
+                            grilla01.setLabel(c2.simbolo);
                             break;
                         case 2:
-                            grilla02.setLabel(logica.turnoActual);
+                            grilla02.setLabel(c2.simbolo);
                             break;
                     }
                     break;
                 case 1:
                     switch (c2.valorY) {
                         case 0:
-                            grilla10.setLabel(logica.turnoActual);
+                            grilla10.setLabel(c2.simbolo);
                             break;
                         case 1:
-                            grilla11.setLabel(logica.turnoActual);
+                            grilla11.setLabel(c2.simbolo);
                             break;
                         case 2:
-                            grilla12.setLabel(logica.turnoActual);
+                            grilla12.setLabel(c2.simbolo);
                             break;
                     }
                     break;
@@ -742,19 +743,21 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                 case 2:
                     switch (c2.valorY) {
                         case 0:
-                            grilla20.setLabel(logica.turnoActual);
+                            grilla20.setLabel(c2.simbolo);
                             break;
                         case 1:
-                            grilla21.setLabel(logica.turnoActual);
+                            grilla21.setLabel(c2.simbolo);
                             break;
                         case 2:
-                            grilla22.setLabel(logica.turnoActual);
+                            grilla22.setLabel(c2.simbolo);
                             break;
                     }
                     break;
             }
+//            logica.setTurnoActual(logica.cambiaTurnos(logica.turnoActual));
+            if (logica.winner!="")
+                victoria();
             
-            logica.cambiaTurnos(logica.turnoActual);
                 
                     
         }
