@@ -385,15 +385,15 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         // TODO add your handling code here:
         if (mandarMensaje.getText().equals("y")) {
             this.chat.setText(this.chat.getText()+System.lineSeparator()+"Conexiones pendientes aceptadas.");
-            servidorJuego.client.send(("0003|NICOLAS CRESPO H23"+System.lineSeparator()).getBytes());
+            servidorJuego.client.send(("0003|NICOLAS CRESPO Host"+System.lineSeparator()).getBytes());
             //esto es nulo wn
             //socketClient.send(("0003|NICOLAS CRESPO H23".getBytes()));
         }
         else if (mandarMensaje.getText().equals("n")) {
             this.chat.setText(this.chat.getText()+System.lineSeparator()+"Conexion rechazada y socketClient de SERVIDORJUEGO establecido a nulo.");
-            servidorJuego.client.send(("0002"+ System.lineSeparator()).getBytes());
-            servidorJuego = null;
-            socketClient = null;
+            servidorJuego.client.send(("0002"+ System.lineSeparator()).getBytes()); 
+            servidorJuego = null; 
+           socketClient = null;
             btnServer.setText("Iniciar Servidor");
 //            socketClient.send(("0002".getBytes()));
             
