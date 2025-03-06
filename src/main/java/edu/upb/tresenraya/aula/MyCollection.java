@@ -12,21 +12,23 @@ import java.util.ArrayList;
  */
 public class MyCollection implements PatronIterator {
 
-    public int index=0;
-    public ArrayList lista;
+    private int index;
+    private ArrayList lista;
+    public MyCollection() {
+        this.index=0;
+        this.lista = new ArrayList();
+    }
     @Override
     public boolean hasNext() {
-        if (index<lista.size()) {
-            return true;
-        }
-        return false;
+        return index<lista.size();
     }
 
     @Override
     public Object getNext() {
-        if (hasNext()) {
+        if (hasNext()) {    
+            Object current = lista.get(index);
             index++;
-        return lista.get(index);
+            return current;
         }
         return null;
     }
@@ -36,5 +38,11 @@ public class MyCollection implements PatronIterator {
     public void addItem(Object T) {
         lista.add(T);
     }
-    
+    public static void main(String[] args) {
+        MyCollection myc = new MyCollection();
+        myc.addItem(0);
+        System.out.println(myc.hasNext());
+        System.out.println(myc.getNext());
+        
+    }
 }
