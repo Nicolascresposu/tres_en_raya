@@ -4,6 +4,7 @@
  */
 package edu.upb.tresenraya.aula;
 
+import edu.upb.tresenraya.Contacto.MyCollection;
 import edu.upb.tresenraya.Comando.NuevaPartida;
 import edu.upb.tresenraya.Comando.SolicitudConexion;
 

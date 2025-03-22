@@ -30,7 +30,7 @@ public class RechazoConexion extends Comando{
 
     @Override
     public String getComando() {
-        return comando;
+        return "0002";
     }
     
 }

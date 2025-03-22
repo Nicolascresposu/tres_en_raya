@@ -11,13 +11,14 @@ package edu.upb.tresenraya.Comando;
 public class AceptacionConexion extends Comando {
 //    private String comando = "0003|NICOLAS CRESPO";
 //    private String nombre = "NICOLAS CRESPO";
-    private String nombre;
+    public String nombre;
     public AceptacionConexion(String nombre) {
         this.nombre = nombre;
         this.comando = comando;
     }
-    public AceptacionConexion() {
+    public AceptacionConexion() {    
     }
+    
     @Override
     public void parsear(String comando) {
         if (comando.matches("0003\\|.*")) {
@@ -38,7 +39,8 @@ public class AceptacionConexion extends Comando {
 
     @Override
     public String getComando() {
-        return comando;
+        //Asi deberia funcionar getcomando
+        return "0003"+"|"+nombre;
     }
     
 }

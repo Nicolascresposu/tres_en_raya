@@ -1,14 +1,29 @@
+//TO-DO
+//O no se marca que es mi turno correctamente o no me deja mandar
+//No se marcan los 0008 que se mandan
+//Cuando actuo como cliente se guarda la ip, pero no el nombre. Se anade a la lista correctaemnte. 
+//IGNORAR TODO LO DE ARRIBA, enfocate en esto:
+//
+//El presionar O para iniciar no te deja en realidad iniciar como O, creo que el comando no se esta mandando correctametne
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package edu.upb.tresenraya;
 
+import edu.upb.tresenraya.Comando.AceptacionConexion;
+import edu.upb.tresenraya.Comando.CerrarYBorrar;
 import edu.upb.tresenraya.aula.InterfazCompra;
 import edu.upb.tresenraya.Comando.Comando;
+import edu.upb.tresenraya.Comando.GodmodeMarcarSimbolo;
 import edu.upb.tresenraya.Comando.MarcarSimbolo;
 import edu.upb.tresenraya.Comando.NuevaPartida;
+import edu.upb.tresenraya.Comando.RechazoConexion;
 import edu.upb.tresenraya.Comando.SolicitudConexion;
+import edu.upb.tresenraya.Contacto.Contacto;
+import edu.upb.tresenraya.Contacto.Contactos;
+import edu.upb.tresenraya.Contacto.MyCollection;
+import edu.upb.tresenraya.aula.PatronIterator;
 import edu.upb.tresenraya.db.ConexionDb;
 import edu.upb.tresenraya.mediador.Mediador;
 import edu.upb.tresenraya.server.ServidorJuego;
@@ -17,13 +32,25 @@ import edu.upb.tresenraya.mediador.OnMessageListener;
 import edu.upb.tresenraya.logicaTicTacToe;
 import edu.upb.tresenraya.server.SocketClient;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -35,18 +62,53 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     private InterfazCompra interfazCompra;
     private logicaTicTacToe logica = new logicaTicTacToe();
     private SocketClient socketClient;
-
+    public boolean esMiTurno;
+    public boolean godmode=false;
+    
+    private final DefaultListModel<Contacto> contacModel = new DefaultListModel<>();
+    private String jugadorBIP;
+    private Connection baseDeDatos = ConexionDb.instancia().getConnection();
     /**
      * Creates new form TresEnRayaUI
      */
     public TresEnRayaUI() {
         initComponents();
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/3raya.png")));
         Mediador.addListener(this);
+        Contactos.getInstance();
         this.enviarMensaje.addActionListener(this);
         this.btnConectar.addActionListener(this);
 //        this.enviarMensaje.setText("<b>Hola</>");
 //        this.iconoDeIsaac.setIcon(new ImageIcon ());
-        ConexionDb.instancia().getConnection();
+        // Esto es para cuando se inicia el programa por primera vez, crear la conexion a la base de datos para 
+        
+        String SQLinicio = """
+                           CREATE TABLE IF NOT EXISTS Cliente (
+                           id INTEGER PRIMARY KEY AUTOINCREMENT,
+                           nombre TEXT,
+                           ip TEXT NOT NULL,
+                           UNIQUE(ip,nombre)     
+                          );
+                           """;
+        try {
+            Statement statement = baseDeDatos.createStatement();
+            statement.execute(SQLinicio);
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(TresEnRayaUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        jLContactos.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    jLContactos.setSelectedIndex(jLContactos.locationToIndex(e.getPoint()));
+                    menuListaContactos.show(jLContactos, e.getPoint().x, e.getPoint().y);
+                }
+            }
+        });
+        jLContactos.setCellRenderer(new ContactRenderer());
+        jLContactos.setModel(contacModel);
+        Contactos.getInstance();
     }
     
     public JLabel getLabel(){
@@ -62,6 +124,13 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        menuListaContactos2358928490840534 = new javax.swing.JPopupMenu();
+        menuListaContactos = new javax.swing.JPopupMenu();
+        jMenuItemRetar = new javax.swing.JMenuItem();
+        ModificarNombreDeContacto = new javax.swing.JMenuItem();
+        ModificarIp = new javax.swing.JMenuItem();
+        EliminarDelRegistro = new javax.swing.JMenuItem();
+        ForzarOlvido = new javax.swing.JMenuItem();
         jToolBar1 = new javax.swing.JToolBar();
         btnServer = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -87,13 +156,61 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         jLabel1 = new javax.swing.JLabel();
         mandarMensaje = new javax.swing.JTextField();
         btnReinicio = new javax.swing.JButton();
+        btnMandarNumeros = new javax.swing.JButton();
+        labelTurnoActual = new javax.swing.JLabel();
+        amsal = new javax.swing.JToggleButton();
+        btnGodmode = new javax.swing.JButton();
+        labelEsMiTurno = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        jLContactos = new javax.swing.JList<>();
+
+        jMenuItemRetar.setText("Retar");
+        jMenuItemRetar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemRetarActionPerformed(evt);
+            }
+        });
+        menuListaContactos.add(jMenuItemRetar);
+
+        ModificarNombreDeContacto.setText("Modificar Nombre");
+        ModificarNombreDeContacto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ModificarNombreDeContactoActionPerformed(evt);
+            }
+        });
+        menuListaContactos.add(ModificarNombreDeContacto);
+
+        ModificarIp.setText("Modificar Ip");
+        ModificarIp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ModificarIpActionPerformed(evt);
+            }
+        });
+        menuListaContactos.add(ModificarIp);
+
+        EliminarDelRegistro.setText("Eliminar");
+        EliminarDelRegistro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EliminarDelRegistroActionPerformed(evt);
+            }
+        });
+        menuListaContactos.add(EliminarDelRegistro);
+
+        ForzarOlvido.setText("Forzar Olvido");
+        ForzarOlvido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ForzarOlvidoActionPerformed(evt);
+            }
+        });
+        menuListaContactos.add(ForzarOlvido);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Tres en Raya");
 
         jToolBar1.setRollover(true);
 
+        btnServer.setMnemonic('I');
         btnServer.setText("Iniciar Servidor");
         btnServer.setFocusable(false);
         btnServer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -155,6 +272,7 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
             }
         });
 
+        grilla02.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         grilla02.setLabel("_");
         grilla02.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -230,14 +348,53 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
             }
         });
 
+        btnMandarNumeros.setText("Mandar numeros del 1 al 10");
+        btnMandarNumeros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMandarNumerosActionPerformed(evt);
+            }
+        });
+
+        labelTurnoActual.setText("Turno de:");
+
+        amsal.setText("AMSAL:");
+        amsal.setToolTipText("Alterar Manualmente Simbolo Actual Local");
+        amsal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                amsalActionPerformed(evt);
+            }
+        });
+
+        btnGodmode.setText("Godmode");
+        btnGodmode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGodmodeActionPerformed(evt);
+            }
+        });
+
+        labelEsMiTurno.setText("Es mi turno? : ");
+
+        jButton3.setText("Refresh");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(canvas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(78, 78, 78))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(88, 88, 88)
+                .addComponent(amsal, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -248,37 +405,24 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                         .addGap(36, 36, 36)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(29, 29, 29)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(textoIP, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(11, 11, 11))))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(85, 85, 85)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jButton1)
-                                    .addComponent(btnConectar)))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(grilla02, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnConectar)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(grilla01, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(grilla00, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(32, 32, 32)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(grilla10, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(grilla12, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(grilla11, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(37, 37, 37)
-                        .addComponent(grilla20, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(31, 31, 31)
-                        .addComponent(btnReinicio))
+                                    .addComponent(btnGodmode)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(textoIP, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addComponent(jLabel1)
+                                            .addGap(11, 11, 11)))))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
-                        .addComponent(jlMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jlMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(btnMandarNumeros))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(mandarMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -288,13 +432,38 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                         .addContainerGap()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(grilla02, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(grilla01, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(grilla00, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(grilla10, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(grilla12, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(grilla11, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(37, 37, 37)
+                .addComponent(grilla20, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(labelTurnoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnReinicio)
+                        .addGap(61, 61, 61))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(labelEsMiTurno, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(grilla00, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(grilla10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -314,19 +483,30 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                                 .addComponent(grilla22, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(grilla20, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnReinicio))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(25, 25, 25)
+                                .addComponent(grilla20, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(labelEsMiTurno)
+                                .addGap(1, 1, 1)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnReinicio)
+                                    .addComponent(labelTurnoActual))))
                         .addGap(14, 14, 14)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(126, 126, 126)
-                                .addComponent(jlMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textoIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnConectar)))))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textoIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnConectar)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(amsal)
+                    .addComponent(btnGodmode)
+                    .addComponent(jButton3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jlMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMandarNumeros))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -342,12 +522,7 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
 
         jSplitPane1.setLeftComponent(jPanel1);
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Amina", "Ariana", "Fernando Rodriguez", "Josue Parada", "Miguel Acha" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
+        jScrollPane1.setViewportView(jLContactos);
 
         jSplitPane1.setRightComponent(jScrollPane1);
 
@@ -356,7 +531,9 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 670, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -383,32 +560,32 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
 
     private void enviarMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enviarMensajeActionPerformed
         // TODO add your handling code here:
-        if (mandarMensaje.getText().equals("y")) {
-            this.chat.setText(this.chat.getText()+System.lineSeparator()+"Conexiones pendientes aceptadas.");
-            servidorJuego.client.send(("0003|NICOLAS CRESPO Host"+System.lineSeparator()).getBytes());
-            //esto es nulo wn
-            //socketClient.send(("0003|NICOLAS CRESPO H23".getBytes()));
-        }
-        else if (mandarMensaje.getText().equals("n")) {
-            this.chat.setText(this.chat.getText()+System.lineSeparator()+"Conexion rechazada y socketClient de SERVIDORJUEGO establecido a nulo.");
-            servidorJuego.client.send(("0002"+ System.lineSeparator()).getBytes()); 
-            servidorJuego = null; 
-           socketClient = null;
-            btnServer.setText("Iniciar Servidor");
-//            socketClient.send(("0002".getBytes()));
+        //Deprecated method of answering requests.
+//        if (mandarMensaje.getText().equals("y")) {
+//            this.chat.setText(this.chat.getText()+System.lineSeparator()+"Conexiones pendientes aceptadas."+System.lineSeparator());
+//            servidorJuego.client.send(("0003|Nicolas Crespo"+System.lineSeparator()).getBytes());
+//            //esto es nulo wn
+//            //socketClient.send(("0003|NICOLAS CRESPO H23".getBytes()));
+//        }
+//        else if (mandarMensaje.getText().equals("n")) {
+//            this.chat.setText(this.chat.getText()+System.lineSeparator()+"Conexion rechazada y socketClient de SERVIDORJUEGO establecido a nulo.");
+//            servidorJuego.client.send(("0002"+ System.lineSeparator()).getBytes()); 
+//            servidorJuego = null; 
+//            socketClient = null;
+//            btnServer.setText("Iniciar Servidor");
+////            socketClient.send(("0002".getBytes()));
             
-        }
-        else {
-            this.chat.setText(this.chat.getText()+System.lineSeparator()+mandarMensaje.getText());
-            if (socketClient!=null) {
-                socketClient.send((mandarMensaje.getText() + System.lineSeparator()).getBytes());
-            }
-            if (servidorJuego!=null) {
-                servidorJuego.client.send((mandarMensaje.getText() + System.lineSeparator()).getBytes());
-            }
-            
-        }
-       
+//        }
+//        else {
+//        }
+        chatAddText(mandarMensaje.getText());
+        Contactos.getInstance().send(jugadorBIP,mandarMensaje.getText()+System.lineSeparator());
+//            if (socketClient!=null) {
+//                socketClient.send((mandarMensaje.getText() + System.lineSeparator()).getBytes());
+//            }
+//            if (servidorJuego!=null) {
+//                servidorJuego.client.send((mandarMensaje.getText() + System.lineSeparator()).getBytes());
+//            }
        mandarMensaje.setText("");
     }//GEN-LAST:event_enviarMensajeActionPerformed
 
@@ -420,16 +597,22 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                 //Socket(ip,puerto)
                 socketClient = new SocketClient(new Socket(textoIP.getText(),1825));
                 socketClient.start();
-                SolicitudConexion solicitudAEnviar = new SolicitudConexion("NICOLAS CRESPO");
+                SolicitudConexion solicitudAEnviar = new SolicitudConexion("Nicolas Crespo");
+                Contactos.getInstance().onNewClient(socketClient);
+                Contactos.getInstance().send(socketClient.getIp(), "0001|" + solicitudAEnviar.nombre + System.lineSeparator());
+                
                 //0001 es el codigo de solicitud enviada
-                socketClient.send(solicitudAEnviar.getComando().getBytes());
+                //Esta es la forma vieja de enviar el mensaje:
+//                socketClient.send(solicitudAEnviar.getComando().getBytes());
+
 //                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                 System.out.println("Escriba un mensaje por la caja de texto.");
-                chat.setText(chat.getText()+System.lineSeparator()+"Nueva conexion establecida con "+textoIP.getText()+" exitosamente!");
+                chatAddText("Nueva conexion establecida con "+textoIP.getText()+" exitosamente!");
 //                socketClient.send((br.readLine() + System.lineSeparator()).getBytes());
 //                String[] args = {textoIP.getText()};
 //                SocketClient.main(args);
 //                jButton2.setText("Cliente Iniciado");
+                labelTurnoActual.setText("Turno de: "+logica.turnoActual);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -451,79 +634,149 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void logicaBotonPresionado(int valorX, int valorY) {
+//        Godmode off
         
-        if (socketClient!=null) {
-            socketClient.send(("0008|"+logica.turnoActual+"|"+valorX+"|"+valorY + System.lineSeparator()).getBytes());
+        if (!godmode) {
+            if (esMiTurno) {
+                //Forma deprecada de mandar mensajes:
+//                if (socketClient!=null) {
+//                    socketClient.send(("0008|"+logica.turnoActual+"|"+valorX+"|"+valorY + System.lineSeparator()).getBytes());
+//                }
+//                if (servidorJuego!=null) {
+//                    servidorJuego.client.send(("0008|"+logica.turnoActual+"|"+valorX+"|"+valorY + System.lineSeparator()).getBytes());
+//                }
+                String mensaje = "0008|"+logica.turnoActual+"|"+valorX+"|"+valorY;
+                Contactos.getInstance().send(jugadorBIP,mensaje + System.lineSeparator());
+                logica.setGrilla(valorX,valorY,logica.turnoActual);
+                chatAddText(mensaje);
+//                chat.setText(chat.getText()+Arrays.toString(logica.grilla)+System.lineSeparator());
+                switch(valorX) {
+                    case 0:
+                        switch (valorY) {
+                            case 0:
+                                grilla00.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                            case 1:
+                                grilla01.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                            case 2:
+                                grilla02.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                        }
+                        break;
+                    case 1:
+                        switch (valorY) {
+                            case 0:
+                                grilla10.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                            case 1:
+                                grilla11.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                            case 2:
+                                grilla12.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                        }
+                        break;
+
+                    case 2:
+                        switch (valorY) {
+                            case 0:
+                                grilla20.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                            case 1:
+                                grilla21.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                            case 2:
+                                grilla22.setLabel(logica.grilla[valorX][valorY]);
+                                break;
+                        }
+                        break;
+                }
+                labelTurnoActual.setText("Turno de: "+logica.turnoActual);
+                if (logica.winner!="")
+                    victoria();
+                esMiTurno=false;
+                labelEsMiTurno.setText("Es mi turno? : "+esMiTurno);
+        } else {System.out.println("No es mi turno.");}
+            
+        }
+        //Godmode on
+        if (godmode) {
+            if (socketClient!=null) {
+            socketClient.send(("0011|"+logica.turnoActual+"|"+valorX+"|"+valorY + System.lineSeparator()).getBytes());
         }
         if (servidorJuego!=null) {
-            servidorJuego.client.send(("0008|"+logica.turnoActual+"|"+valorX+"|"+valorY + System.lineSeparator()).getBytes());
+            servidorJuego.client.send(("0011|"+logica.turnoActual+"|"+valorX+"|"+valorY + System.lineSeparator()).getBytes());
         }
-        logica.setGrilla(valorX,valorY,logica.turnoActual);
+        logica.godmodeSetGrilla(valorX,valorY,logica.turnoActual);
+        labelTurnoActual.setText("Turno de: "+logica.turnoActual);
         if (logica.winner!="")
             victoria();
+        }
+        
     }
     private void grilla00ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla00ActionPerformed
         // TODO add your handling code here:
         int valorX = 0;
         int valorY = 0;
         logicaBotonPresionado(valorX,valorY);
-        grilla00.setLabel(logica.grilla[valorX][valorY]);
+//        grilla00.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla00ActionPerformed
-
+    
+//    grilla00.addActionListener( buttonPressed);
+    
     private void grilla01ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla01ActionPerformed
         int valorX = 0;
         int valorY = 1;
         logicaBotonPresionado(valorX,valorY);
-        grilla01.setLabel(logica.grilla[valorX][valorY]);
+//        grilla01.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla01ActionPerformed
 
     private void grilla02ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla02ActionPerformed
         int valorX = 0;
         int valorY = 2;
         logicaBotonPresionado(valorX,valorY);
-        grilla02.setLabel(logica.grilla[valorX][valorY]);
+//        grilla02.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla02ActionPerformed
 
     private void grilla12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla12ActionPerformed
         int valorX = 1;
         int valorY = 2;
         logicaBotonPresionado(valorX,valorY);
-        grilla12.setLabel(logica.grilla[valorX][valorY]);
+//        grilla12.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla12ActionPerformed
 
     private void grilla10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla10ActionPerformed
         int valorX = 1;
         int valorY = 0;
         logicaBotonPresionado(valorX,valorY);
-        grilla10.setLabel(logica.grilla[valorX][valorY]);
+//        grilla10.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla10ActionPerformed
 
     private void grilla11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla11ActionPerformed
         int valorX = 1;
         int valorY = 1;
         logicaBotonPresionado(valorX,valorY);
-        grilla11.setLabel(logica.grilla[valorX][valorY]);
+//        grilla11.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla11ActionPerformed
 
     private void grilla20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla20ActionPerformed
         int valorX = 2;
         int valorY = 0;
         logicaBotonPresionado(valorX,valorY);
-        grilla20.setLabel(logica.grilla[valorX][valorY]);
+//        grilla20.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla20ActionPerformed
 
     private void grilla21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla21ActionPerformed
         int valorX = 2;
         int valorY = 1;
         logicaBotonPresionado(valorX,valorY);
-        grilla21.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla21ActionPerformed
 
     private void grilla22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grilla22ActionPerformed
         int valorX = 2;
         int valorY = 2;
         logicaBotonPresionado(valorX,valorY);
-        grilla22.setLabel(logica.grilla[valorX][valorY]);
     }//GEN-LAST:event_grilla22ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -546,7 +799,8 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         // TODO add your handling code here:
     }//GEN-LAST:event_mandarMensajeActionPerformed
 
-    private void btnReinicioPressed() {
+    private void reiniciarGrilla() {
+        //Quiza deberia tener un atributo String turnoOponente y hacer el setturnoactual basado en eso
         grilla00.setLabel("_");
         grilla01.setLabel("_");
         grilla02.setLabel("_");
@@ -559,7 +813,8 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
         logica.setTurnoActual("X");
         logica.grilla=new String[3][3];
         //Mandamos solicitud de nueva partida
-        servidorJuego.client.send(("0007"+System.lineSeparator()).getBytes());
+        
+//        servidorJuego.client.send(();
 //        logica.setGrilla(0, 0, "_");
 //        logica.setGrilla(0, 1, "_");
 //        logica.setGrilla(0, 2, "_");
@@ -572,8 +827,210 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     }
     private void btnReinicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReinicioActionPerformed
         // TODO add your handling code here:
-        btnReinicioPressed();
+        reiniciarGrilla();
+        Contactos.getInstance().send(jugadorBIP, "0007"+System.lineSeparator());
     }//GEN-LAST:event_btnReinicioActionPerformed
+
+    private void btnMandarNumerosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMandarNumerosActionPerformed
+        MyCollection iterator = new MyCollection();
+        iterator.addItem("0");
+        iterator.addItem("1");
+        iterator.addItem("2");
+        iterator.addItem("3");
+        iterator.addItem("4");
+        iterator.addItem("5");
+        iterator.addItem("6");
+        iterator.addItem("7");
+        iterator.addItem("8");
+        iterator.addItem("9");
+        iterator.addItem("10");
+        
+//        while (iterator.hasNext()) {
+//            servidorJuego.client.send( ( iterator.getNext()+System.lineSeparator() ).getBytes());
+//        }
+        if (socketClient!=null) {
+                while (iterator.hasNext()) {
+                socketClient.send( ( iterator.getNext()+System.lineSeparator() ).getBytes());
+        }
+            }
+            if (servidorJuego!=null) {
+                while (iterator.hasNext()) {
+                servidorJuego.client.send( ( iterator.getNext()+System.lineSeparator() ).getBytes());
+        }
+            }
+        
+    }//GEN-LAST:event_btnMandarNumerosActionPerformed
+
+    private void jMenuItemRetarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRetarActionPerformed
+        // TODO add your handling code here:
+//        JPanelJuego jPanelJuego = new JPanelJuego();
+//        jPanelJuego.setVisible(true);
+//        JFrame ventanaSecundaria = new JFrame("Ventana Secundaria");
+//        ventanaSecundaria.getContentPane().add(jPanelJuego);
+//        ventanaSecundaria.setSize(400, 400); // Establece el tamaño de la ventana
+//        ventanaSecundaria.setLocationRelativeTo(null); // Centra la ventana en la pantalla
+//        ventanaSecundaria.setVisible(true);
+//Todo lo comentado era para la ventana secundaria del profe
+        System.out.println("Deberia enviar un 0007 o algo? lol");
+        int selectedIndex = jLContactos.getSelectedIndex();
+        Object[] options = {"X", "O"};
+
+        // Show the dialog and get the user's choice
+        int choice = JOptionPane.showOptionDialog(
+            this, // Parent component (the current frame)
+            "Seleccione X o O", // Message to display
+            "Selección de Símbolo", // Title of the dialog
+            JOptionPane.DEFAULT_OPTION, // Option type
+            JOptionPane.QUESTION_MESSAGE, // Message type
+            null, // Icon (null for default)
+            options, // Array of options (buttons)
+            options[0] // Default selected option
+        );
+
+        // Handle the user's choice
+        // Si, hay muchas lineas repetidas porque si no me da miedo que el else haga algo.
+        if (choice == 0) {
+            System.out.println("El usuario seleccionó X");
+            logica.turnoActual="X";
+            Contactos.getInstance().send(jugadorBIP, "0004|X"+System.lineSeparator());
+            esMiTurno=true;
+            labelEsMiTurno.setText("Es mi turno? : TRUE");
+        } else if (choice == 1) {
+            System.out.println("El usuario seleccionó O");
+            logica.turnoActual="O";
+            Contactos.getInstance().send(jugadorBIP, "0004|O"+System.lineSeparator());
+            esMiTurno=true;
+            labelEsMiTurno.setText("Es mi turno? : TRUE");
+        } else {
+            System.out.println("El usuario cerró el diálogo sin seleccionar");
+        }
+            
+        
+        
+    }//GEN-LAST:event_jMenuItemRetarActionPerformed
+
+    private void EliminarDelRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarDelRegistroActionPerformed
+                // Get the selected contact
+        int selectedIndex = jLContactos.getSelectedIndex();
+        if (selectedIndex != -1) { // Ensure an item is selected
+            Contacto selectedContact = contacModel.getElementAt(selectedIndex);
+
+            // Remove the contact from the model
+            contacModel.remove(selectedIndex);
+            //Remove from DB ig
+            
+                                String SQLAdd = """
+                           DELETE FROM Cliente WHERE ip = ?;
+                           """;
+                    try {   
+                        PreparedStatement preparedStatement = baseDeDatos.prepareStatement(SQLAdd);
+                        preparedStatement.setString(1, selectedContact.getIp());
+                        
+                        //Esto es de tipo statement
+                        int rowsAffected = preparedStatement.executeUpdate();
+                        if (rowsAffected > 0) {
+                            System.out.println("Record deleted successfully!");
+                        } else {
+                            System.out.println("Record either didn't exist or something else went wrong.");
+                        }
+                        
+//                        baseDeDatos.createStatement().execute(preparedStatement);
+
+                    } catch (SQLException ex) {
+                        Logger.getLogger(TresEnRayaUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+            // Remove the contact from the Contactos instance
+            Contactos.getInstance().removeClient(selectedContact.getIp());
+
+            // Optionally, notify the user that the contact has been deleted
+            JOptionPane.showMessageDialog(this, "Contacto eliminado: " + selectedContact.getName(), "Contacto Eliminado", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado ningún contacto.", "Error", JOptionPane.ERROR_MESSAGE);
+        }           
+    }//GEN-LAST:event_EliminarDelRegistroActionPerformed
+
+    private void ModificarNombreDeContactoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModificarNombreDeContactoActionPerformed
+        int selectedIndex = jLContactos.getSelectedIndex();
+        if (selectedIndex != -1) { // Ensure an item is selected
+            Contacto selectedContact = contacModel.getElementAt(selectedIndex);
+
+            // Prompt the user for a new name
+            String nuevoNombre = JOptionPane.showInputDialog(this, "Ingrese el nuevo nombre para el contacto:", selectedContact.getName());
+
+            if (nuevoNombre != null && !nuevoNombre.trim().isEmpty()) { // Ensure the input is valid
+                // Update the contact's name
+                selectedContact.setName(nuevoNombre.trim());
+
+                // Refresh the list to reflect the changes
+                contacModel.set(selectedIndex, selectedContact);
+
+                // Notify the user that the contact has been updated
+                JOptionPane.showMessageDialog(this, "Nombre del contacto actualizado: " + selectedContact.getName(), "Contacto Modificado", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado ningún contacto.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_ModificarNombreDeContactoActionPerformed
+
+    private void ModificarIpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModificarIpActionPerformed
+        //Esta parte fue hecha con ayuda de deepseek, mismo para el cambio de Nombre.
+        int selectedIndex = jLContactos.getSelectedIndex();
+        if (selectedIndex != -1) { // Ensure an item is selected
+            Contacto selectedContact = contacModel.getElementAt(selectedIndex);
+
+            // Prompt the user for a new name
+            String nuevaIp = JOptionPane.showInputDialog(this, "Ingrese la nueva ip para el contacto:", selectedContact.getIp());
+
+            if (nuevaIp != null && !nuevaIp.trim().isEmpty()) { // Ensure the input is valid
+                // Update the contact's name
+                selectedContact.setIp(nuevaIp.trim());
+
+                // Refresh the list to reflect the changes
+                contacModel.set(selectedIndex, selectedContact);
+
+                // Notify the user that the contact has been updated
+                JOptionPane.showMessageDialog(this, "IP del contacto actualizado: " + selectedContact.getName() + ". Recuerda que esto no actualiza la conexion actual en caso que hubieras actualizado ese contacto.", "Contacto Modificado", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado ningún contacto.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_ModificarIpActionPerformed
+
+    private void amsalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_amsalActionPerformed
+        logica.setTurnoActual(logica.cambiaTurnos(logica.turnoActual));
+        amsal.setText("AMSAL: " + logica.turnoActual);
+    }//GEN-LAST:event_amsalActionPerformed
+
+    private void ForzarOlvidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ForzarOlvidoActionPerformed
+        int selectedIndex = jLContactos.getSelectedIndex();
+        if (selectedIndex != -1) { // Ensure an item is selected
+            Contacto selectedContact = contacModel.getElementAt(selectedIndex);
+            //Hardcoded name I gave myself on client connection is "Nicolas Crespo"
+            Contactos.getInstance().send(selectedContact.getIp(), "0010" + "|" + "Nicolas Crespo");
+        }
+            
+            
+    }//GEN-LAST:event_ForzarOlvidoActionPerformed
+
+    private void btnGodmodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGodmodeActionPerformed
+        if (godmode) {
+            godmode=false;
+            btnGodmode.setBackground(new javax.swing.JButton().getBackground());
+        } else {
+            godmode = true;
+            btnGodmode.setBackground(Color.red);
+        }
+        
+    }//GEN-LAST:event_btnGodmodeActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        refresh();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -611,7 +1068,14 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem EliminarDelRegistro;
+    private javax.swing.JMenuItem ForzarOlvido;
+    private javax.swing.JMenuItem ModificarIp;
+    private javax.swing.JMenuItem ModificarNombreDeContacto;
+    private javax.swing.JToggleButton amsal;
     private javax.swing.JButton btnConectar;
+    private javax.swing.JButton btnGodmode;
+    private javax.swing.JButton btnMandarNumeros;
     private javax.swing.JButton btnReinicio;
     private javax.swing.JButton btnServer;
     private java.awt.Canvas canvas1;
@@ -628,15 +1092,21 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     private java.awt.Button grilla22;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JList<Contacto> jLContactos;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList<String> jList1;
+    private javax.swing.JMenuItem jMenuItemRetar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel jlMessage;
+    private javax.swing.JLabel labelEsMiTurno;
+    private javax.swing.JLabel labelTurnoActual;
     private javax.swing.JTextField mandarMensaje;
+    private javax.swing.JPopupMenu menuListaContactos;
+    private javax.swing.JPopupMenu menuListaContactos2358928490840534;
     private javax.swing.JTextField textoIP;
     // End of variables declaration//GEN-END:variables
 
@@ -644,18 +1114,24 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
             
     @Override
     public void onMessage(String msg) {
-
+        chatAddText(msg);
+//        this.chat.setText(this.chat.getText()+System.lineSeparator()+msg);
         try {
-            SolicitudConexion solicitud = new SolicitudConexion();
-            solicitud.parsear(msg);
-            
-            if (solicitud.nombre!=null) {
-            this.chat.setText(this.chat.getText()+System.lineSeparator()+"El usuario "+solicitud.nombre+" ha intentado conectarse. Aceptas? y/n.");
-        } else {
-                this.chat.setText(this.chat.getText()+System.lineSeparator()+msg);
-                Thread.sleep(400);
-            }
-            
+            Thread.sleep(400);
+            //Deprecated function to parse the name inside a request. Now we handle it via Command.
+//        try {
+//            SolicitudConexion solicitud = new SolicitudConexion();
+//            solicitud.parsear(msg);
+//            
+//            if (solicitud.nombre!=null) {
+//            this.chat.setText(this.chat.getText()+System.lineSeparator()+"El usuario "+solicitud.nombre+" ha intentado conectarse. Aceptas? y/n.");
+//        } else {
+//                
+//            }
+//            
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(TresEnRayaUI.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         } catch (InterruptedException ex) {
             Logger.getLogger(TresEnRayaUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -700,6 +1176,28 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
             grilla22.setBackground(Color.cyan);
         }
     }
+    
+    private int findContactoIndexInModel(String name, String ip) {
+    for (int i = 0; i < contacModel.size(); i++) {
+        Contacto contacto = contacModel.getElementAt(i);
+        if ((name != null && contacto.getName().equals(name)) || 
+            (ip != null && contacto.getIp().equals(ip))) {
+//            return contacto; // Return the matching Contacto
+            return i;
+        }
+    }
+        return -1; // No matching Contacto found
+    }
+    private Contacto findContactoInModel(String name, String ip) {
+    for (int i = 0; i < contacModel.size(); i++) {
+        Contacto contacto = contacModel.getElementAt(i);
+        if ((name != null && contacto.getName().equals(name)) || 
+            (ip != null && contacto.getIp().equals(ip))) {
+            return contacto; // Return the matching Contacto
+        }
+    }
+    return null; // No matching Contacto found
+    }
 
     public void onMessage(Object c) {
         return;
@@ -708,10 +1206,72 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
     @Override
     public void onMessage(Comando c) {
         // tambien se puede hacer (c instanceof MarcarSimbolo)
+        //GodmodeMarcarSimbolo (NO tiene limitaciones de turno)
         if (c.getClass()==MarcarSimbolo.class) {
             MarcarSimbolo c2 = (MarcarSimbolo) c;
-            logica.setGrilla(c2.valorX,c2.valorY,c2.simbolo);
-            chat.setText(chat.getText()+System.lineSeparator()+c.comando);
+            logica.setGrilla(c2.valorX, c2.valorY, c2.simbolo);
+//            chatAddText(c.comando);
+            //Cambiamos el turno
+//            logica.setTurnoActual(logica.cambiaTurnos(logica.turnoActual));
+//            esMiTurno=true;
+            labelTurnoActual.setText("Turno de: "+logica.turnoActual);
+            //Todo esto es si NO es mi turno HUEVON
+            if (!esMiTurno) {
+                switch(c2.valorX) {
+                case 0:
+                    switch (c2.valorY) {
+                        case 0:
+                            grilla00.setLabel(c2.simbolo);
+                            break;
+                        case 1:
+                            grilla01.setLabel(c2.simbolo);
+                            break;
+                        case 2:
+                            grilla02.setLabel(c2.simbolo);
+                            break;
+                    }
+                    break;
+                case 1:
+                    switch (c2.valorY) {
+                        case 0:
+                            grilla10.setLabel(c2.simbolo);
+                            break;
+                        case 1:
+                            grilla11.setLabel(c2.simbolo);
+                            break;
+                        case 2:
+                            grilla12.setLabel(c2.simbolo);
+                            break;
+                    }
+                    break;
+                    
+                case 2:
+                    switch (c2.valorY) {
+                        case 0:
+                            grilla20.setLabel(c2.simbolo);
+                            break;
+                        case 1:
+                            grilla21.setLabel(c2.simbolo);
+                            break;
+                        case 2:
+                            grilla22.setLabel(c2.simbolo);
+                            break;
+                    }
+                    break;
+            }
+//            logica.setTurnoActual(logica.cambiaTurnos(logica.turnoActual));
+                if (logica.winner!="")
+                    victoria();
+                esMiTurno=true;
+                labelEsMiTurno.setText("Es mi turno? : "+esMiTurno);
+            }
+            
+        }
+        if (c.getClass()==GodmodeMarcarSimbolo.class) {
+            GodmodeMarcarSimbolo c2 = (GodmodeMarcarSimbolo) c;
+            logica.godmodeSetGrilla(c2.valorX,c2.valorY,c2.simbolo);
+//            chat.setText(chat.getText()+System.lineSeparator()+c.comando);
+            labelTurnoActual.setText("Turno de: "+logica.turnoActual);
             switch(c2.valorX) {
                 case 0:
                     switch (c2.valorY) {
@@ -761,14 +1321,123 @@ public class TresEnRayaUI extends javax.swing.JFrame implements OnMessageListene
                 
                     
         }
-        if (c.getClass()==SolicitudConexion.class) {
-            SolicitudConexion c2 = (SolicitudConexion) c;
-            SolicitudConexionUI scui = new SolicitudConexionUI(c2.nombre);
-            System.out.println("Estoy en la linea 675");
+        if (c.getClass()==SolicitudConexion.class) {//0001
+            SolicitudConexion solicitudConexion = (SolicitudConexion) c;
+            this.jugadorBIP = solicitudConexion.getIp();
+            int n = JOptionPane.showConfirmDialog(this, solicitudConexion.nombre + " te ha solicitado",
+                    "Aceptas?",
+                    JOptionPane.YES_NO_OPTION);
+            switch (n) {
+                case JOptionPane.YES_OPTION ->{
+                    //Cuando contesta si
+                    contacModel.addElement(new Contacto(solicitudConexion.nombre,solicitudConexion.ip, true));
+                    System.out.println("ip en TERUI es: "+c.getIp());
+                    Contactos.getInstance().send(c.ip, new AceptacionConexion("Nicolas Crespo").getComando()+System.lineSeparator());          
+                    String SQLAdd = """
+                           INSERT OR IGNORE INTO Cliente (nombre, ip) VALUES (?, ?);
+                           """;
+                    try {   
+                        PreparedStatement preparedStatement = baseDeDatos.prepareStatement(SQLAdd);
+                        preparedStatement.setString(1, solicitudConexion.nombre);
+                        preparedStatement.setString(2, c.ip);
+                        
+                        //Esto es de tipo statement
+                        int rowsAffected = preparedStatement.executeUpdate();
+                        if (rowsAffected > 0) {
+                            System.out.println("Record inserted successfully!");
+                        } else {
+                            System.out.println("Record already exists. No insertion performed.");
+                        }
+                        
+//                        baseDeDatos.createStatement().execute(preparedStatement);
+
+                    } catch (SQLException ex) {
+                        Logger.getLogger(TresEnRayaUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                case JOptionPane.NO_OPTION ->
+                    Contactos.getInstance().send(c.ip, new RechazoConexion().getComando()+System.lineSeparator());
+                default -> {
+                }
+            }
+            return;
+//            SolicitudConexionUI scui = new SolicitudConexionUI(solicitudConexion.nombre);
+            //Error falso
+        }
+        if (c.getClass()==AceptacionConexion.class) {//0003
+            AceptacionConexion c2 = (AceptacionConexion) c;
+            contacModel.addElement(new Contacto(c2.nombre,c2.ip, true));
+            jugadorBIP = c2.ip;
+            String SQLAdd = """
+                   INSERT OR IGNORE INTO Cliente (nombre, ip) VALUES (?, ?);
+                   """;
+            try {   
+                PreparedStatement preparedStatement = baseDeDatos.prepareStatement(SQLAdd);
+                preparedStatement.setString(1, c2.nombre);
+                preparedStatement.setString(2, c2.ip);
+
+                //Esto es de tipo statement
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("Record inserted successfully!");
+                } else {
+                    System.out.println("Record already exists. No insertion performed.");
+                }
+
+//                        baseDeDatos.createStatement().execute(preparedStatement);
+
+            } catch (SQLException ex) {
+                Logger.getLogger(TresEnRayaUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         if (c.getClass()==NuevaPartida.class) {
             NuevaPartida c2 = (NuevaPartida) c;
-            btnReinicioPressed();
+            reiniciarGrilla();
         }
+        if (c.getClass() == CerrarYBorrar.class) {
+            System.out.println("Ejecutando Cerrar y Borrar");
+            CerrarYBorrar c2 = (CerrarYBorrar) c;
+            
+            socketClient.closeConnection();
+            servidorJuego.client.closeConnection();
+            //fallback de emergencia porque ALGO ESTA MAL CON EL contacList
+            jLContactos.removeAll();
+            contacModel.remove(findContactoIndexInModel(c2.nombre,c2.ip));
+//            System.exit(0);
+        }
+        if (c.getClass() == MarcarSimbolo.class) {
+            
+        }
+        return;
+    }
+    public void chatAddText(String newText) {
+        chat.setText(chat.getText()+newText+System.lineSeparator());
+    }
+    public void refresh() {
+        String SQLAdd = """
+                   SELECT * FROM Cliente;
+                   """;
+            try {   
+                PreparedStatement preparedStatement = baseDeDatos.prepareStatement(SQLAdd);
+
+                //Esto es de tipo statement
+                ResultSet resultSet = preparedStatement.getResultSet();
+                resultSet.getArray("ip");
+                resultSet.getArray("nombre");
+                while (resultSet.next()) {
+                    
+                    
+                }
+//                if (rowsAffected > 0) {
+//                    System.out.println("Record inserted successfully!");
+//                } else {
+//                    System.out.println("Record already exists. No insertion performed.");
+//                }
+
+//                        baseDeDatos.createStatement().execute(preparedStatement);
+
+            } catch (SQLException ex) {
+                Logger.getLogger(TresEnRayaUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
 }

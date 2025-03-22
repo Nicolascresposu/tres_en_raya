@@ -91,9 +91,9 @@ public class logicaTicTacToe {
     }
     public String cambiaTurnos(String ingreso) {
         // Recibe el turno actual y devuelve su opuesto respectivo, para usar en setGrilla
-        if (ingreso == "X")
+        if (ingreso.equals("X"))
             return "O";
-        if (ingreso == "O")
+        if (ingreso.equals("O"))
             return "X";
         else {
             System.out.println("Erorr fatal, no se ingreso correctamente alguno");
@@ -113,6 +113,14 @@ public class logicaTicTacToe {
             grilla[posX][posY] = ingreso;
             checkWinner();
             turnoActual = cambiaTurnos(ingreso);
+            return;
+        }
+        else return;
+    }
+    public void godmodeSetGrilla(int posX, int posY, String ingreso) {
+        if (grilla[posX][posY] != "X" &&  grilla[posX][posY] != "O") {
+            grilla[posX][posY] = ingreso;
+            checkWinner();
             return;
         }
         else return;

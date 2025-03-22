@@ -4,9 +4,11 @@
  */
 package edu.upb.tresenraya.db;
 
+import edu.upb.tresenraya.Contacto.Contactos;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,4 +43,8 @@ public class ConexionDb {
         }
         return null;
     }
+//    public Contactos buildContactosFromTable(Connection connection) {
+//        Contactos cont = Contactos.getInstance();
+//        
+//    }
 }

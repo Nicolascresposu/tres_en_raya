@@ -5,6 +5,7 @@
 package edu.upb.tresenraya.server;
 
 import edu.upb.tresenraya.Comando.Comando;
+import edu.upb.tresenraya.Contacto.MediadorContactos;
 import edu.upb.tresenraya.mediador.Mediador;
 import edu.upb.tresenraya.mediador.OnMessageListener;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class ServidorJuego extends Thread implements OnMessageListener{
                 Socket socket = this.serverSocket.accept();
                 client = new SocketClient(socket);
                 //client.addJLabel(enRayaUI.getLabel());
+                MediadorContactos.geInstance().newClient(client);
                 client.start();
             } catch (IOException e) {
                 

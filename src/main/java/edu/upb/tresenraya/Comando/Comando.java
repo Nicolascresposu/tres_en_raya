@@ -15,6 +15,8 @@ import lombok.Setter;
 @Setter
 public abstract class Comando {
     public String comando;
+    public String ip;
     public abstract void parsear(String comando);
+//    public abstract String getIp();
     public abstract String getComando();
 }

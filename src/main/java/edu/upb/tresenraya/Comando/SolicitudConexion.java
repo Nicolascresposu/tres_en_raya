@@ -4,14 +4,20 @@
  */
 package edu.upb.tresenraya.Comando;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *
  * @author nicol
  */
+@Getter
+@Setter
 public class SolicitudConexion extends Comando{
 //    private String comando = "0001";
 //    private String nombre = "NICOLAS CRESPO";
     public String nombre;
+//    public String ip;
     public SolicitudConexion(String nombre) {
         this.nombre = nombre;
         this.comando = "0001";
@@ -20,6 +26,7 @@ public class SolicitudConexion extends Comando{
     }
 
     @Override
+    
     public void parsear(String comando) {
         if (comando.matches("0001\\|.*")) {
             String[] split = comando.split("\\|");
@@ -29,6 +36,10 @@ public class SolicitudConexion extends Comando{
         }
         System.out.println("El comando tenia una forma erronea.");
         return;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     @Override

@@ -5,11 +5,16 @@
 package edu.upb.tresenraya.server;
 
 import edu.upb.tresenraya.Comando.AceptacionConexion;
+import edu.upb.tresenraya.Comando.CerrarYBorrar;
 import edu.upb.tresenraya.Comando.Comando;
+import edu.upb.tresenraya.Comando.GodmodeMarcarSimbolo;
 import edu.upb.tresenraya.Comando.MarcarSimbolo;
 import edu.upb.tresenraya.Comando.NuevaPartida;
 import edu.upb.tresenraya.Comando.RechazoConexion;
 import edu.upb.tresenraya.Comando.SolicitudConexion;
+import edu.upb.tresenraya.Comando.SolicitudIniciarJuego;
+import edu.upb.tresenraya.Comando.SolicitudJugarAceptada;
+import edu.upb.tresenraya.Comando.SolicitudJugarRechazada;
 import edu.upb.tresenraya.mediador.Mediador;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -24,8 +29,9 @@ public class SocketClient extends Thread {
 
     private final Socket socket;
     private final String ip;
-    private final DataOutputStream dout;
-    private final BufferedReader br;
+    //Quiza deberia volverlo a hacer privado?
+    public DataOutputStream dout;
+    public BufferedReader br;
 
     public SocketClient(Socket socket) throws IOException {
         this.socket = socket;
@@ -39,41 +45,89 @@ public class SocketClient extends Thread {
         try {
             String message;
             while ((message = br.readLine()) != null) {
+                Mediador.sendMessage(message);
                 if (message.contains("0001")) {
-                    Comando c = new SolicitudConexion();
+                    Comando c = new SolicitudConexion(message.split("\\|")[1]);
+                    c.setIp(this.ip);
                     Mediador.sendMessage(c);
+                    continue;
                 }
                 if (message.contains("0002")) {
                     Comando c = new RechazoConexion();
+                    c.setIp(this.ip);
                     Mediador.sendMessage(c);
+                    continue;
                 }
                 if (message.contains("0003")) {
-                    Comando c = new AceptacionConexion();
+                    Comando c = new AceptacionConexion(message.split("\\|")[1]);
+                    c.setIp(this.ip);
+                    // To-do anadir guardado de nombre desde el message que se recibe
                     Mediador.sendMessage(c);    
+                    continue;
+                }
+                if (message.contains("0004")) {
+                    Comando c = new SolicitudIniciarJuego(message.split("\\|")[1]);
+                    c.setIp(this.ip);
+                    Mediador.sendMessage(c);    
+                    continue;
+                }
+                if (message.contains("0005")) {
+                    Comando c = new SolicitudJugarRechazada();
+                    c.setIp(this.ip);
+                    Mediador.sendMessage(c);    
+                    continue;
+                }
+                if (message.contains("0006")) {
+                    Comando c = new SolicitudJugarAceptada();
+                    c.setIp(this.ip);
+                    Mediador.sendMessage(c);    
+                    continue;
                 }
                 
                 if (message.contains("0007")) {
                     Comando c = new NuevaPartida();
+                    c.setIp(this.ip);
                     Mediador.sendMessage(c);
+                    continue;
                 }
                 
                 if (message.contains("0008")) {
                     Comando c = new MarcarSimbolo(message);
+                    c.setIp(this.ip);
                     Mediador.sendMessage(c);
+                    continue;
+                }
+//                if (message.contains("0009")) {
+//                    Comando c = new MarcarPartida();
+//                    c.setIp(this.ip);
+//                    Mediador.sendMessage(c);
+//                }
+                if (message.contains("0010")) {
+                    Comando c = new CerrarYBorrar(message);
+                    c.setIp(this.ip);
+                    Mediador.sendMessage(c);
+                    continue;
+                }
+                if (message.contains("0011")) {
+                    Comando c = new GodmodeMarcarSimbolo(message);
+                    c.setIp(this.ip);
+                    Mediador.sendMessage(c);
+                    continue;
                 }
                 
                 if (message.equals("leave")) {
                     System.exit(0);
+                    continue;
                 }
                 if (message.equals("verde")) {
                     Mediador.onButtonGreen();
+                    continue;
                 }
                 if (message.equals("cerrar")) {
                     Mediador.onClose();
-                    return;
-                } else {
-                    Mediador.sendMessage(message);
+//                    continue;
                 }
+                    
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,6 +139,27 @@ public class SocketClient extends Thread {
             dout.write(buffer);
             dout.flush();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getIp() {
+        return ip;
+    }
+    public synchronized void closeConnection() {
+        try {
+            if (dout != null) {
+                dout.close();
+            }
+            if (br != null) {
+                br.close();
+            }
+            if (socket != null && !socket.isClosed()) {
+                socket.close(); // Close the socket
+            }
+            System.out.println("Connection closed for IP: " + ip);
+//            System.exit(0);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
