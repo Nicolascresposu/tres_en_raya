@@ -44,30 +44,9 @@ public class Contactos implements SocketListener {
         contatos.put(sc.getIp(), sc);
         System.out.println("Cantidad de contactos: " + contatos.size());
     }
-
-//    public void send(String ip, String msg) {
-//        System.out.println("Ip en Contactos.send es: "+ip);
-//        if (ip==null) {
-//            //bandaid because I am going to die
-//            ip="127.0.0.1";
-//            System.out.println("das ip ist schwerkodifiziert");
-//        }
-//        System.out.println("Enviando: \"" + msg + "\" a " +ip+ " a.k.a "+this.contatos.get(ip).getName());
-//        SocketClient sc = this.contatos.get(ip);
-//        if (sc != null) {
-//            sc.send(msg.getBytes());
-//        }
-//    }
+    
     public void send(String ip, String msg) {
         System.out.println("Ip en Contactos.send es: " + ip);
-
-        // Check if the IP is null or empty
-//        if (ip == null || ip.trim().isEmpty()) {
-////            System.out.println("Error: IP is null or empty.");
-////            return; // Exit the method to avoid NullPointerException
-//            ip="127.0.0.1";
-//        }
-
         // Retrieve the SocketClient from the map
         SocketClient sc = this.contatos.get(ip);
 

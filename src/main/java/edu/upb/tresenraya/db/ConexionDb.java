@@ -43,8 +43,4 @@ public class ConexionDb {
         }
         return null;
     }
-//    public Contactos buildContactosFromTable(Connection connection) {
-//        Contactos cont = Contactos.getInstance();
-//        
-//    }
 }
